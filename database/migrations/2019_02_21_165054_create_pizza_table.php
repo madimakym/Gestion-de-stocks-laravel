@@ -6,24 +6,25 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreatePizzaTable extends Migration
 {
-   
+  
     public function up()
     {
-        Schema::create('pizzas', function (Blueprint $table) {
+        Schema::create('pizza', function (Blueprint $table) {
             $table->increments('id');
             $table->string('libelle')->nullable();
             $table->text('description')->nullable(); 
             $table->integer('prix')->nullable(); 
-            $table->integer('category_id')->unsigned();
+            $table->string('image')->nullable(); 
+            $table->integer('category_id')->unsigned()->nullable();
             $table->foreign('category_id')->references('id')->on('category_pizza')
-                ->onDelete('restrict')
-                ->onUpdate('restrict');
-                $table->timestamps();
+            ->onDelete('CASCADE');
+            $table->timestamps();
         });
     }
-   
+
+  
     public function down()
     {
-        Schema::dropIfExists('pizzas');
+        Schema::dropIfExists('pizza');
     }
 }

@@ -8,13 +8,19 @@ use App\Salades;
 
 class SaladesController extends Controller
 {
+        
+   public function __construct()
+   {
+        $this->middleware('auth');
+   }
+
    
     public function index()
     {
             $title = 'Toutes les salades';
             $subtitle = 'Witch Laravel 5.7';
 
-            $salades = Salades::orderBy('created_at', 'desc')->paginate(3);
+            $salades = Salades::orderBy('created_at', 'desc')->paginate(10);
             return view('salades.index', compact('salades', 'title', 'subtitle'));
     }
     

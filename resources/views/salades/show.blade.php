@@ -41,7 +41,9 @@
                               <dt class="box-title">Visuel</dt>
                           </div>
                               <br> 
-                              <img src="{{url('images', $product->image)}}" class="img-thumbnail img-center" width="100%"/> <br>
+                              {{-- <img src="public/{{$product->image }}" class="img-thumbnail img-center" width="100%"> --}}
+                              <img src="{{url('images', $product->image)}}" class="img-thumbnail img-center" width="100%"/> 
+                              <br>
                           </div> 
                   </div>
               

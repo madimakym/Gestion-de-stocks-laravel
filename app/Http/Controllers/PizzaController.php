@@ -4,22 +4,25 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-// use App\Pizza;
-
 use App\Category_pizza;
 
 use Illuminate\Support\Facades\DB;
 
 class PizzaController extends Controller
 {
-   
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
     public function index()
     {
         $title = 'Tous les produits';
         $subtitle = 'Witch Laravel 5.7';
 
-        $resultats = DB::table('pizzas')->select('pizzas.libelle','pizzas.id', 'description', 'prix', 'category_pizza.libelle AS taille')
-        ->join('category_pizza', 'category_pizza.id', '=', 'pizzas.category_id')->get();
+        $resultats = DB::table('pizza')->select('pizza.libelle','pizza.id', 'description', 'prix', 'category_pizza.libelle AS taille')
+        ->join('category_pizza', 'category_pizza.id', '=', 'pizza.category_id')->get();
         // ->paginate(3);
 
         return view('pizza.index', compact('resultats', 'title', 'subtitle'));
@@ -38,20 +41,27 @@ class PizzaController extends Controller
     public function store(Request $request)
     {
 
+        $request->validate([
+            'libelle' => 'required',
+            'description' => 'required',
+            'prix' => 'required|integer',
+            'category_id' => 'required',
+            'image' => 'required'
+        ]);
+
         $libelle = request('libelle');  
         $description = request('description', null);  
         $prix = request('prix');  
         $category_id = request('category_id');  
-
-        $formInput=$request->except('image');
+        $image = $request['image'];
         $image=$request->image;
-        
+
         if($image){
             $imageName = $image->getClientOriginalName();
             $image->move('images',$imageName);
         }
 
-        DB::table('pizzas')->insert(
+        DB::table('pizza')->insert(
             [
                 'libelle' => $libelle,
                 'description' => $description,
@@ -69,7 +79,7 @@ class PizzaController extends Controller
         $title = 'Détails';
         $subtitle = 'Witch Laravel 5.7';
 
-        $resultat = DB::table('pizzas')->where('id', '=', $id)->first();
+        $resultat = DB::table('pizza')->where('id', '=', $id)->first();
         return view('pizza.show', compact('resultat', 'title', 'subtitle'));
     }
     
@@ -79,7 +89,7 @@ class PizzaController extends Controller
         $title = 'Modifier le produit';
         $subtitle = 'Witch Laravel 5.7';
         
-        $product = DB::table('pizzas')->where('id', '=', $id)->first();       
+        $product = DB::table('pizza')->where('id', '=', $id)->first();       
         // recupere la categorie
         $categories = DB::table('category_pizza')->select('id', 'libelle')->pluck('libelle','id');
         
@@ -110,7 +120,7 @@ class PizzaController extends Controller
             $image->move('images',$new_image);
         }
 
-        DB::table('pizzas')
+        DB::table('pizza')
             ->where('id', '=', $id)
             ->update(
                 array(
@@ -127,7 +137,7 @@ class PizzaController extends Controller
    
     public function destroy($id)
     {
-        DB::table('pizzas')->where('id', '=', $id)->delete();
+        DB::table('pizza')->where('id', '=', $id)->delete();
         return redirect()->route('pizza.index')
                         ->with('success','produit supprimé');
     }
